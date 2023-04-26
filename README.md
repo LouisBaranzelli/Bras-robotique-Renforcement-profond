@@ -1,5 +1,5 @@
-### Entrainement d'un bras robotique grâce à un apprentissage par renforcement profond
-##titre Objectifs
+# Entrainement d'un bras robotique grâce à un apprentissage par renforcement profond
+## Objectifs
 Ce projet a pour but de piloter un bras robotique grâce à un réseau de neurones afin de lui faire atteindre une cible définie (point rouge). La cible est générée à une position aléatoire.
 
 ## Conception du bras robotique
