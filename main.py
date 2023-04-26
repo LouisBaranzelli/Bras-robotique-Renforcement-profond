@@ -21,9 +21,9 @@ if __name__ == '__main__':
 
     robot = BrasRobot(env, 50, 750)
     q_neuronne = Neural_network(robot)
-
+    # #
     q_neuronne.main_train_bras_robot(cycle=100, step=200)
-    q_neuronne.model.save_weights("weight_last_model.h5")
+    # q_neuronne.
     plt.plot(q_neuronne.result_cycle)
     plt.show()
 

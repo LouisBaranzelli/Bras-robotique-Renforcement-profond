@@ -57,6 +57,9 @@ class BrasRobot():
 
 
         bras_robot = -1
+
+        self.environnement.set_target(x=random.randrange(0,700), y=random.randrange(0,700))
+
         while bras_robot == -1:
 
             self.bras_1.delete()
@@ -130,13 +133,13 @@ class BrasRobot():
 
         # Ajout des valeurs par defaut
         if longueur_bras_1 == None:
-            longueur_bras_1 = 300
+            longueur_bras_1 = 350
 
         if longueur_bras_2 == None:
-            longueur_bras_2 = 100
+            longueur_bras_2 = 200
 
         if longueur_bras_3 == None:
-            longueur_bras_3 = 300
+            longueur_bras_3 = 350
 
         if angle_moteur_1 == None:
             angle_moteur_1 = 0
@@ -230,7 +233,7 @@ class BrasRobot():
         bras_1 = SubBrasRobot(self.canvas,
                               x_moteur=x_base,
                               y_moteur=y_base,
-                              longueur=300,
+                              longueur=350,
                               theta_base=theta_base_moteur_1,
                               angle_initial=angle_moteur_1,
                               couleur='red')
@@ -238,7 +241,7 @@ class BrasRobot():
         bras_2 = SubBrasRobot(self.canvas,
                               x_moteur=bras_1.x_accroche,
                               y_moteur=bras_1.y_accroche,
-                              longueur=100,
+                              longueur=200,
                               theta_base=theta_base_moteur_2,
                               angle_initial=angle_moteur_2,
                               couleur='green')
@@ -246,7 +249,7 @@ class BrasRobot():
         bras_3 = SubBrasRobot(self.canvas,
                               x_moteur=bras_2.x_accroche,
                               y_moteur=bras_2.y_accroche,
-                              longueur=300,
+                              longueur=350,
                               theta_base=theta_base_moteur_3,
                               angle_initial=angle_moteur_3,
                               couleur='yellow')
@@ -384,6 +387,9 @@ class BrasRobot():
         """
 
         # Récupération des coordonnées de la cible et de chaque moteur du bras
+
+
+
         x_target = self.environnement.x_target
         y_target = self.environnement.y_target
 
@@ -392,6 +398,10 @@ class BrasRobot():
 
         x_moteur_3 = self.bras_3.x_moteur
         y_moteur_3 = self.bras_3.y_moteur
+
+        x_extremite_3 = self.bras_3.x_accroche
+        y_extremite_3 = self.bras_3.y_accroche
+
 
 
 
@@ -402,7 +412,10 @@ class BrasRobot():
                x_moteur_2 - x_target, \
                y_moteur_2 - y_target,\
                x_moteur_3 - x_target, \
-               y_moteur_3 - y_target)
+               y_moteur_3 - y_target,\
+               x_extremite_3 - x_target, \
+               y_extremite_3 - y_target
+            )
 
 
     def step(self, action_moteur, couple_moteur=1, explication=False):
@@ -522,9 +535,9 @@ class BrasRobot():
         if self.get_cible_atteinte(precision=self.precision) == 1:
             delta_reward = 5
 
-        # Si la récompense est négative, on la met à 0 pour éviter les récompenses négatives
-        if delta_reward < 0:
-            delta_reward = 0
+        # # Si la récompense est négative, on la met à 0 pour éviter les récompenses négatives
+        # if delta_reward < 0:
+        #     delta_reward = 0
 
         # mise au cube de la recompense
         return delta_reward

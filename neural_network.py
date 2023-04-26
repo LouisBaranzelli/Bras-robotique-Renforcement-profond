@@ -9,9 +9,9 @@ import random
 from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 
-from keras.layers import Dense
-from keras.models import Sequential
-from keras.layers import Conv1D
+from keras.layers import Dense, Input
+
+
 import keras.optimizers
 import numpy as np
 import pandas as pd
@@ -19,6 +19,7 @@ pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 import math
 from functools import partial
+from tensorflow.keras.models import load_model
 
 
 
@@ -32,11 +33,7 @@ class Neural_network():
             bras_robot (BrasRobot): Un objet BrasRobot utilisé pour initialiser le modèle.
         """
 
-        # Créer une fonction dense avec une régularisation L1 et L2
-        regularized_dense = partial(keras.layers.Dense,
-                                    activation='relu',
-                                    kernel_initializer=keras.initializers.HeNormal(),
-                                    kernel_regularizer=keras.regularizers.l1_l2(0.01, 0.01))
+
 
         # Initialiser les attributs
         self.loss = []
@@ -49,17 +46,20 @@ class Neural_network():
         # Initialiser le modèle
         self.model = keras.models.Sequential()
 
+
         # Ajouter une couche cachée avec 50 neurones et une activation relu avec régularisation L1 et L2
-        self.model.add(regularized_dense(50))
+        self.model.add(keras.layers.Dense(80))
+        # self.model.add(keras.layers.Dense(20))
 
         # Ajouter une couche de dropout avec un taux de 0.2 pour réduire le surapprentissage
-        self.model.add(keras.layers.Dropout(0.2))
+        # self.model.add(keras.layers.Dropout(0.2))
 
         # Ajouter une couche de sortie avec le nombre de neurones linéaires = au nombre d'actions possibles.
         self.model.add(keras.layers.Dense(len(self.liste_action.action_possible), activation='linear'))
 
         # Compiler le modèle avec la fonction de perte et l'optimiseur spécifiés
         self.model.compile(loss=self.model_loss, optimizer=self.optimizer)
+
 
 
     def main_train_bras_robot(self, explication=True, cycle=50, step=400):
@@ -94,6 +94,8 @@ class Neural_network():
                                            'ancien_delta_y_moteur_2',
                                            'ancien_delta_x_moteur_3',
                                            'ancien_delta_y_moteur_3',
+                                           'ancien_delta_x_pointe_moteur_3',
+                                           'ancien_delta_y_pointe_moteur_3',
                                            'recompense',
                                            'nouvelle_position_moteur_1',
                                            'nouvelle_position_moteur_2',
@@ -102,6 +104,8 @@ class Neural_network():
                                            'nouveau_delta_y_moteur_2',
                                            'nouveau_delta_x_moteur_3',
                                            'nouveau_delta_y_moteur_3',
+                                           'nouveau_delta_x_pointe_moteur_3',
+                                           'nouveau_delta_y_pointe_moteur_3',
                                            'index_action'])
 
         self.result_cycle = []
@@ -123,6 +127,7 @@ class Neural_network():
                                     self.bras_robot.bras_2.angle_ouverture, \
                                     self.bras_robot.bras_3.angle_ouverture
 
+
                 # Calcul du couple moteur
                 couple_moteur = math.ceil((self.bras_robot.get_distance_cible()) / 200)  # Couple de 1 a 5
 
@@ -143,7 +148,8 @@ class Neural_network():
                 ancienne_position_abs_moteur_3 = conversion_angle(ancienne_position_abs_moteur_3)
 
                 ancien_delta_x_m2, ancien_delta_y_m2, \
-                ancien_delta_x_m3, ancien_delta_y_m3, = self.bras_robot.get_distance_from_moteur()
+                ancien_delta_x_m3, ancien_delta_y_m3, \
+                ancien_delta_x_pointe_m3, ancien_delta_y_pointe_m3 = self.bras_robot.get_distance_from_moteur()
 
                 # Execution de l'action et obtention de la nouvelle position et du reward associé
                 nouvelle_position, reward = self.bras_robot.step(action, couple_moteur=couple_moteur)
@@ -172,8 +178,10 @@ class Neural_network():
                 nouvelle_position_abs_moteur_3 = self.bras_robot.bras_3.angle_ouverture + self.bras_robot.bras_3.theta_base
                 nouvelle_position_abs_moteur_3 = conversion_angle(nouvelle_position_abs_moteur_3)
 
+
                 nouveau_delta_x_m2, nouveau_delta_y_m2, \
-                nouveau_delta_x_m3, nouveau_delta_y_m3, = self.bras_robot.get_distance_from_moteur()
+                nouveau_delta_x_m3, nouveau_delta_y_m3, \
+                nouveau_delta_x_pointe_m3, nouveau_delta_y_pointe_m3 = self.bras_robot.get_distance_from_moteur()
 
                 # Creation de la nouvelle ligne de data
                 nouvelle_ligne = pd.DataFrame(
@@ -184,6 +192,9 @@ class Neural_network():
                      'ancien_delta_y_moteur_2': [ancien_delta_y_m2],
                      'ancien_delta_x_moteur_3': [ancien_delta_x_m3],
                      'ancien_delta_y_moteur_3': [ancien_delta_y_m3],
+                     'ancien_delta_x_pointe_moteur_3': [ancien_delta_x_pointe_m3],
+                     'ancien_delta_y_pointe_moteur_3': [ancien_delta_y_pointe_m3],
+
                      'nouvelle_position_moteur_1': [nouvelle_position_abs_moteur_1],
                      'nouvelle_position_moteur_2': [nouvelle_position_abs_moteur_2],
                      'nouvelle_position_moteur_3': [nouvelle_position_abs_moteur_3],
@@ -191,6 +202,12 @@ class Neural_network():
                     'nouveau_delta_y_moteur_2': [nouveau_delta_y_m2],
                     'nouveau_delta_x_moteur_3': [nouveau_delta_x_m3],
                     'nouveau_delta_y_moteur_3': [nouveau_delta_y_m3],
+
+
+                     'nouveau_delta_x_pointe_moteur_3': [nouveau_delta_x_pointe_m3],
+                     'nouveau_delta_y_pointe_moteur_3': [nouveau_delta_y_pointe_m3],
+
+
                      'index_action': [index_action],
                      'recompense': [reward]})
 
@@ -205,7 +222,9 @@ class Neural_network():
                                             'ancien_delta_x_moteur_2',
                                             'ancien_delta_y_moteur_2',
                                             'ancien_delta_x_moteur_3',
-                                            'ancien_delta_y_moteur_3'
+                                            'ancien_delta_y_moteur_3',
+                                            'ancien_delta_x_pointe_moteur_3',
+                                            'ancien_delta_y_pointe_moteur_3'
                                             ]].to_numpy())
                 # print ("liste des position du moteur 1",df_dataset.position_moteur_1)
                 # print ("moyenne position du moteur 1",df_dataset.position_moteur_1.mean())
@@ -236,7 +255,9 @@ class Neural_network():
                                              'ancien_delta_x_moteur_2',
                                              'ancien_delta_y_moteur_2',
                                              'ancien_delta_x_moteur_3',
-                                             'ancien_delta_y_moteur_3'
+                                             'ancien_delta_y_moteur_3',
+                                             'ancien_delta_x_pointe_moteur_3',
+                                             'ancien_delta_y_pointe_moteur_3'
                                              ]],
                                  df_dataset[['index_action']],
                                  df_dataset[['nouvelle_position_moteur_1',
@@ -245,7 +266,10 @@ class Neural_network():
                                              'nouveau_delta_x_moteur_2',
                                              'nouveau_delta_y_moteur_2',
                                              'nouveau_delta_x_moteur_3',
-                                             'nouveau_delta_y_moteur_3'
+                                             'nouveau_delta_y_moteur_3',
+                                             'nouveau_delta_x_pointe_moteur_3',
+                                             'nouveau_delta_y_pointe_moteur_3'
+
                                              ]],
                                  df_dataset[['recompense']], explication=True)
 
@@ -253,9 +277,15 @@ class Neural_network():
         with open('scaler.pkl', 'wb') as f:
             pickle.dump(self.scaler, f)
 
+        self.model.save("last_model.h5")
+
+
     def test(self, name_model=None):
 
-        self.model.load_weights(name_model)
+
+        self.model = load_model(name_model, compile=False)
+
+        #
         with open('scaler.pkl', 'rb') as f:
             self.scaler = pickle.load(f)
 
@@ -269,7 +299,7 @@ class Neural_network():
                                 self.bras_robot.bras_3.angle_ouverture
 
             index_action = self.choisir_action(position_moteur=position_moteur_n,
-                                               ratio_exploration=0,
+                                               ratio_exploration=0.2,
                                                couple_applique=1)
             action = self.liste_action.get_action(index_action)
 
@@ -370,9 +400,9 @@ class Neural_network():
         nbr_ligne, nbr_colonne = df_position_moteur.shape
 
         # Vérification que le dataframe contient bien 3 colonnes, sinon lève une exception AttributeError.
-        if nbr_colonne != 7:
+        if nbr_colonne != 9:
             raise AttributeError(
-                f"Pour effectuer une prediction, veuillez fournir 7 arguments [nombre d'argument: {nbr_colonne}]")
+                f"Pour effectuer une prediction, veuillez fournir 9 arguments [nombre d'argument: {nbr_colonne}]")
 
         # Si le paramètre explanation est True, affiche les positions de moteur fournies par l'utilisateur.
         if explanation:
@@ -437,7 +467,9 @@ class Neural_network():
                                                                                                        'nouveau_delta_x_moteur_2',
                                                                                                        'nouveau_delta_y_moteur_2',
                                                                                                        'nouveau_delta_x_moteur_3',
-                                                                                                       'nouveau_delta_y_moteur_3'
+                                                                                                       'nouveau_delta_y_moteur_3',
+                                                                                                       'nouveau_delta_x_pointe_moteur_3',
+                                                                                                       'nouveau_delta_y_pointe_moteur_3'
                                                                                                        ]]
             batch_q_value_f = self.make_prediction(batch_pos_moteur_f, explanation=False)
             # print("\n Prediction", batch_q_value_f)
@@ -500,7 +532,7 @@ class Neural_network():
         gradien = tf.multiply(mask_tensor, gradien)
 
         # tf.print('Gradient avec masque', gradien)
-        gradien = tf.reduce_max(gradien, axis=1)
+        # gradien = tf.reduce_max(gradien, axis=1)
         # tf.print("gradient output", gradien)
 
         # tf.print(gradien)
