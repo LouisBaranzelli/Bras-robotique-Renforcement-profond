@@ -7,8 +7,8 @@ Le bras robotique est synthétisé sur un canevas tkinter. Il est composé de tr
 
 Les capteurs du robot sont :
 
-*3 Rotatiomètres sur chaque moteur
-*3 Capteurs de positions sur chaque moteur (ils récupèrent une valeur x et y de la distance avec la cible)
+* 3 Rotatiomètres sur chaque moteur
+* 3 Capteurs de positions sur chaque moteur (ils récupèrent une valeur x et y de la distance avec la cible)
 *Les angles des moteurs 3 et 2 varient entre 0 et 90 degrés par rapport à un angle de base défini. Le moteur 1 a une plage de 180 degrés.
 
 Les mouvements possibles du robot sont définis dans "action_moteur" et permettent de faire tourner chaque moteur, dans la mesure où ce mouvement est possible (limites du canevas, plage maximale des moteurs).
@@ -20,8 +20,8 @@ L'action est choisie via un réseau de neurones qui évalue la meilleure straté
 
 Le réseau de neurones prend en entrée la position absolue des angles des moteurs ainsi que la position relative de la cible par rapport aux moteurs, soit 9 arguments :
 
-*3 positions d'angles de moteur
-*3 * (2 coordonnées de moteurs).
+* 3 positions d'angles de moteur
+* 3 * (2 coordonnées de moteurs).
 En sortie, le réseau évalue la Q-value pour chacune des actions et choisit l'action qui maximise la Q-value.
 
 La Q-value est calculée à travers l'équation de Bellman. Comme l'objectif est d'atteindre la cible en 20 étapes, le gamma pour définir la q_value target (cf équation de Bellman) est fixé à 0,9 (0,9^20 = 0,12 ~ 0).
