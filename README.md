@@ -26,8 +26,8 @@ En sortie, le réseau évalue la Q-value pour chacune des actions et choisit l'a
 
 La Q-value est calculée à travers l'équation de Bellman. Comme l'objectif est d'atteindre la cible en 20 étapes, le gamma pour définir la q_value target (cf équation de Bellman) est fixé à 0,9 (0,9^20 = 0,12 ~ 0).
 
-## Apprentissage
-# Déroulement de l'entrainement
+# Apprentissage
+## Déroulement de l'entrainement
 L'entraînement s'effectue en 2 étapes : collecte des données, et entraînement du réseau de neurones.
 
 Pour entraîner le bras, 100 cycles sont effectués, chacun composé de 200 étapes maximum. La position initiale, la récompense, la position finale et le mouvement sélectionné sont conservés et enregistrés et mélangés dans un dataframe pandas. Ces données sont réutilisées pour ré-entraîner le bras.
