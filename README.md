@@ -53,7 +53,7 @@ Il est composé d'une seule couche de 80 neurones cachés.
 Toutes les données sont normalisées
 
 ### La fonction de perte
-La fonction de perte est personnalisée car le gradient ne doit etre calcule et se propager qu'à travers la Q-Value de l'action sélectionnée pour calculer la Q-target. Ce filtre est défini via la variable de classe "mask_tensor". L'erreur est calculée comme suit :
+La fonction de perte est personnalisée car le gradient ne doit etre calculé et se propager qu'à travers la Q-Value de l'action sélectionnée pour calculer la Q-target. Ce filtre est défini via la variable de classe "mask_tensor". L'erreur est calculée comme suit :
 
 erreur = (prédiction - cible)^2
 
