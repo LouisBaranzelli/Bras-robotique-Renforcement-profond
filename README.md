@@ -2,7 +2,7 @@
 ##titre Objectifs
 Ce projet a pour but de piloter un bras robotique grâce à un réseau de neurones afin de lui faire atteindre une cible définie (point rouge). La cible est générée à une position aléatoire.
 
-##titre Conception du bras robotique
+## Conception du bras robotique
 Le bras robotique est synthétisé sur un canevas tkinter. Il est composé de trois articulations. Les angles des moteurs sont définis en degrés et tournent dans le sens inverse des aiguilles d'une montre.
 
 Les capteurs du robot sont :
