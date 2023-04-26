@@ -42,11 +42,13 @@ Au terme de 10 cycles, le réseau de neurones est entraîné sur les données co
 ### Déplacement
 Durant l'apprentissage, deux modes de déplacement sont utilisés : l'exploration et l'exploitation. Le choix entre les deux modes est aléatoire suivant la loi de probabilité suivante :
 
-Au cycle 1, 100 % des choix sont exploratoires.
-Au cycle n, on suit une loi récursive : la probabilité d'exploration au cycle n+1 est de 0,95 fois celle du cycle n.
+* Au cycle 1, 100 % des choix sont exploratoires.
+* Au cycle n, on suit une loi récursive : la probabilité d'exploration au cycle n+1 est de 0,95 fois celle du cycle n.
 Un minimum de 10 % de probabilité d'exploration est conservé.
-* En cas d'exploration, le mouvement est choisi aléatoirement. 
-* En cas d'exploitation, une action est prédite via le réseau de neurones et effectuée pour maximiser la Q-Value.
+
+En cas d'exploration, le mouvement est choisi aléatoirement. 
+
+En cas d'exploitation, une action est prédite via le réseau de neurones et effectuée pour maximiser la Q-Value.
 
 ### Le réseau de neurones
 Il est composé d'une seule couche de 80 neurones cachés.
