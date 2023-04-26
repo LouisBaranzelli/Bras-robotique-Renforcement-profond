@@ -62,7 +62,7 @@ erreur = (prédiction - cible)^2
 avec Q-target = gamma * prédiction(n+1) + récompense.
 
 ## Limites du modèle
-Ce modèle simpliste ne permet pas de définir une stratégie globale pour atteindre la cible. Ceci est problématique car, dans un mode de déplacement en rotation, la distance la plus courte n'est pas la ligne droite. Le bras reste donc bloqué sur des minima globaux (en cas de rotation qui atteint le bord ou si la cible se retrouve dans l'axe du bras). Dans ces deux cas, le bras oscille.
+Ce modèle simpliste ne permet pas de définir une stratégie globale pour atteindre la cible. Ceci est problématique car, dans un mode de déplacement à travers des rotations, la distance la plus courte n'est pas la ligne droite. Le bras reste donc bloqué sur des minima locaux (en cas de rotation qui atteint le bord ou si la cible se retrouve dans l'axe du bras). Dans ces deux cas, le bras oscille.
 
 
 
