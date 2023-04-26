@@ -39,7 +39,7 @@ Après chaque cycle, le bras est réinitialisé aléatoirement.
 Au terme de 10 cycles, le réseau de neurones est entraîné sur les données collectées.
 
 
-# Déplacement
+### Déplacement
 Durant l'apprentissage, deux modes de déplacement sont utilisés : l'exploration et l'exploitation. Le choix entre les deux modes est aléatoire suivant la loi de probabilité suivante :
 
 Au cycle 1, 100 % des choix sont exploratoires.
@@ -47,11 +47,11 @@ Au cycle n, on suit une loi récursive : la probabilité d'exploration au cycle 
 Un minimum de 10 % de probabilité d'exploration est conservé.
 En cas d'exploration, le mouvement est choisi aléatoirement. En cas d'exploitation, une action est prédite via le réseau de neurones et effectuée pour maximiser la Q-Value.
 
-# Le réseau de neurones
+### Le réseau de neurones
 Il est composé d'une seule couche de 80 neurones cachés.
 Toutes les données sont normalisées
 
-# La fonction de perte
+### La fonction de perte
 La fonction de perte est personnalisée car le gradient ne doit se propager qu'à travers la Q-Value de l'action sélectionnée pour calculer la Q-target. Ce filtre est défini via la variable de classe "mask_tensor". L'erreur est calculée comme suit :
 
 erreur = (prédiction - cible)^2
